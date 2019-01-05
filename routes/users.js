@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var tokenizer = require("../util/jwt-tokenizer");
+const jwt = require('jsonwebtoken');
 var UserModel = require('../models/user');
 
 module.exports = function(passport){
@@ -10,9 +11,6 @@ module.exports = function(passport){
   });
 var AuthenticationController = require('../controllers/AuthenticationController');
 
-router.get('/signup', function(req, res){
-		res.render('auth/signup');
-});
 
 router.post('/signup',function(req, res, next) {
   passport.authenticate('signup',{ session: true },function(err, signup, info) {
@@ -41,46 +39,18 @@ router.post('/signup',function(req, res, next) {
  });
 
 
- router.get('/signup-portal', function(req, res){
-  res.render('auth/signupPortal');
-});
-
- router.post('/signup-portal',function(req, res, next) {
-  passport.authenticate('signupPortal',{ session: true },function(err, signup, info) {
-    console.log("info--> " + JSON.stringify(signup));
-    if (err) {
-      return next(err);
+ router.get('/decode', tokenizer.verifyJwtToken, function(req, res, next) {
+  //  res.send(JSON.stringify(req.decoded));
+  jwt.verify(req.token, 'mySecretKey', (err, authData) => {
+    if(err) {
+      res.sendStatus(403);
+    } else {
+      res.json({
+        message: 'Post created...',
+        authData
+      });
     }
-    if (! signup) {
-      var objRegister = {
-        message: "failed",
-        result: "failed",
-        resultMessage: "Username or Email is already Exists"
-        }
-    }else{
-      var objRegister = {
-          message: "success",
-          result: "success",
-          resultMessage: "Congratulations, New portal user had successfully registered to Autozon",
-          userId: signup._id,
-          retailer_id: signup.retailer_id,
-          retailer_name: signup.retailer_name
-      }
-    }
-    return res.send(objRegister);
-  })(req, res, next);
- });
-
-
-
- router.get('/token', function(req, res) {
-   var user = {username: "akousername", fullname: "akofullname"};
-   var token = tokenizer.sign(user);
-   res.send(token);
- });
-
- router.get('/decode', tokenizer.verify, function(req, res, next) {
-   res.send(JSON.stringify(req.decoded));
+  });
  });
 
 router.get('/login', function(req, res) {
@@ -104,7 +74,7 @@ router.post('/login', function(req, res, next) {
       if (loginErr) {
         return next(loginErr);
       }
-      var token = tokenizer.sign(user);
+      var token = jwt.sign({user}, 'mySecretKey' , { expiresIn: '1h' });
       var objLoginSuccess = {
         message : 'success',
         authorize : 'true',

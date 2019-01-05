@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var tokenizer = require("../util/jwt-tokenizer");
+//--------------another way to encode user--------------------------
+const jwt = require('jsonwebtoken');
 var UserModel = require('../models/user');
 var isAuthenticated = function (req, res, next) {
 	if (req.isAuthenticated())
@@ -42,39 +44,6 @@ router.post('/signup',function(req, res, next) {
   })(req, res, next);
  });
 
-
- router.get('/signup-portal', function(req, res){
-  res.render('auth/signupPortal');
-});
-
- router.post('/signup-portal',function(req, res, next) {
-  passport.authenticate('signupPortal',{ session: true },function(err, signup, info) {
-    console.log("info--> " + JSON.stringify(signup));
-    if (err) {
-      return next(err);
-    }
-    if (! signup) {
-      var objRegister = {
-        message: "failed",
-        result: "failed",
-        resultMessage: "Username or Email is already Exists"
-        }
-    }else{
-      var objRegister = {
-          message: "success",
-          result: "success",
-          resultMessage: "Congratulations, New portal user had successfully registered to Autozon",
-          userId: signup._id,
-          retailer_id: signup.retailer_id,
-          retailer_name: signup.retailer_name
-      }
-    }
-    return res.send(objRegister);
-  })(req, res, next);
- });
-
-
-
  router.get('/token', function(req, res) {
    var user = {username: "akousername", fullname: "akofullname"};
    var token = tokenizer.sign(user);
@@ -106,7 +75,8 @@ router.post('/login', function(req, res, next) {
       if (loginErr) {
         return next(loginErr);
       }
-      var token = tokenizer.sign(user);
+      // var token = tokenizer.sign(user);
+      var token = jwt.sign(user, { expiresIn: '30s' });
       var objLoginSuccess = {
         message : 'success',
         authorize : 'true',
@@ -117,39 +87,6 @@ router.post('/login', function(req, res, next) {
     });
   })(req, res, next);
 });
-
-router.get('/login-portal', function(req, res) {
-  res.render('auth/loginPortal');
-});
-
-router.post('/login-portal', function(req, res, next) {
-  passport.authenticate('loginPortal', function(err, user, info) {
-    if (err) {
-      return next(err);
-    }
-    if (! user) {
-      var objLoginFailed = {
-        message : 'failed',
-        authorize : 'false'
-      }
-      return res.send(objLoginFailed);
-    }
-    req.login(user, loginErr => {
-      if (loginErr) {
-        return next(loginErr);
-      }
-      var token = tokenizer.sign(user);
-      var objLoginSuccess = {
-        message : 'success',
-        authorize : 'true',
-        token : token,
-        user
-      }
-      return res.send(objLoginSuccess);
-    });
-  })(req, res, next);
-});
-
 //var tokenUser = tokenizer.verify;
 //var currentObjectId = "2rOrhGKkY3";
 router.get('/me', function(req, res){

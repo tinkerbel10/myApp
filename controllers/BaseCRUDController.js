@@ -23,11 +23,6 @@ var BaseCRUDController = {
         callback(err, singleObject);
     });
   },
-  /*
-  SAMPLE:
-  id: "somerandomalphanumeric"
-  fieldsAndData: {field1: "field1", field2: "field2"}
-  */
   update: function(id , fieldsAndData , callback){
     console.log("IM HERE WITH ID: " + id + "  " + JSON.stringify(fieldsAndData));
     this.model.findByIdAndUpdate(id, { $set: fieldsAndData} ,function (err, singleObject) {
@@ -91,15 +86,8 @@ var BaseCRUDController = {
             modifiedSearch = {};
 
         }
-
-        console.log("MODIFIED SEARCH::: " +JSON.stringify(modifiedSearch));
-
         this.searchWithPagination(modifiedSearch, pNo , pNumRec ,callback);
-
-        //conosole.log(JSON.stringify(seachCriteria));
-        //this.searchWithPagination(seachCriteria, pNo , pNumRec ,callback);
     }else{
-      console.log("bbbb -->>>" + JSON.stringify(seachCriteria));
       this.model.find(seachCriteria,  function (err, list) {
           callback(err, list, list.length);
       }).sort({created_at: -1}).limit(20);
@@ -124,7 +112,6 @@ var BaseCRUDController = {
     });
   },
   group: function(seachCriteria, callback){
-    console.log("HERE 22222");
     this.model.aggregate([
         {
           /* Filter out users who have not yet subscribed */

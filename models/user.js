@@ -16,8 +16,7 @@ var userSchema = new Schema({
   contact_number: String,
   userType: String,
   createdAt : {type: Date, default: Date.now},
-  updatedAt : {type: Date, default: Date.now},
-  is_deleted: {type:Boolean, default:false}
+  updatedAt : {type: Date, default: Date.now}
 });
 
 //hashing a password before saving it to the database
