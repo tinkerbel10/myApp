@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var userRequestController = require('../controllers/userRequestController');
-var userRequest = require('../models/userRequest');
+var roleController = require('../controllers/roleController');
+// var cart = require('../models/userRequest');
 
 router.get('/', function(req, res, next){
-  userRequestController.search({}, function(err, result){
+  roleController.search({}, function(err, result){
     var response = {data: result};
       res.send(response);
   });
@@ -28,7 +28,7 @@ router.get('/', function(req, res, next){
 //CREATE
 router.post('/', function(req, res, next) {
   var data = req.body;
-  userRequestController.save(data, function(error, singleObject){
+  roleController.save(data, function(error, singleObject){
     var response = {data: singleObject};
     res.send(JSON.stringify(response))
   });
@@ -38,7 +38,7 @@ router.post('/', function(req, res, next) {
 //RETRIEVE BY ID
 router.get('/:id', function(req, res, next){
   var id = req.params.id;
-  userRequestController.view(id, function(err, result){
+  roleController.view(id, function(err, result){
     // console.log("FORM DATAqqq---> " + JSON.stringify(result));
     res.send(JSON.stringify(result));
   });
@@ -49,7 +49,7 @@ router.get('/:id', function(req, res, next){
 router.delete('/:id', function(req, res, next) {
   var id = req.params.id;
   var formData = {is_deleted: true};
-  userRequestController.delete(id, formData, function(err, result){
+  roleController.delete(id, formData, function(err, result){
     // console.log("formData--->" + JSON.stringify(result))
     res.send(result)
   });
@@ -59,7 +59,7 @@ router.delete('/:id', function(req, res, next) {
 router.post('/:id', function(req, res, next){
   var id = req.params.id;
   var formData = req.body;
-  userRequestController.update(id, formData, function(err, result){
+  roleController.update(id, formData, function(err, result){
     // console.log("formData--->" + JSON.stringify(result))
     res.send(result)
   });

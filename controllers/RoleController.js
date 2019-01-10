@@ -1,5 +1,5 @@
-var userRequest = require('../models/userRequest');
-var mod = userRequest;
+var role = require('../models/role');
+var mod = role;
 
 var BaseCRUD = {
   save: function(obj, callback){
@@ -9,27 +9,27 @@ var BaseCRUD = {
     });
   },
   search: function(search, callback){
-    userRequest.find(function(err, list){
+    role.find(function(err, list){
       callback(err, list);
     });
   },
   fetchAll: function(search, callback){
-    userRequest.find({}, function(err, list){
+    role.find({}, function(err, list){
       callback(err, list);
     });
   },
   view: function(id, callback){
-    userRequest.findById(id, function(err, result){
+    role.findById(id, function(err, result){
       callback(err, result);
     })
   },
   delete: function(id, formData, callback){
-    userRequest.findByIdAndUpdate(id, {$set: formData}, function(err, result){
+    role.findByIdAndUpdate(id, {$set: formData}, function(err, result){
       callback(err, result);
     });
   },
   update: function(id, formData, callback){
-    userRequest.findByIdAndUpdate(id, {$set: formData}, function(err, result){
+    role.findByIdAndUpdate(id, {$set: formData}, function(err, result){
       callback(err, result);
     });
   }
