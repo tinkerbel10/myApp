@@ -40,6 +40,8 @@ router.post('/signup',function(req, res, next) {
 
 
  router.get('/decode', tokenizer.verifyJwtToken, function(req, res, next) {
+  //  console.log('this is session', req,);
+  //  console.log('this is session',  res);
   //  res.send(JSON.stringify(req.decoded));
   jwt.verify(req.token, 'mySecretKey', (err, authData) => {
     if(err) {
@@ -58,7 +60,7 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', function(req, res, next) {
-  console.log("USER FIELD--> " + JSON.stringify(req.body))
+  // console.log("USER FIELD--> " + JSON.stringify(req.body))
   passport.authenticate('login', function(err, user, info) {
     if (err) {
       return next(err);
@@ -140,23 +142,24 @@ if(!req.user){
 
 router.get('/profile', function(req, res){
   if(req.user){
-    objProfile = {
-      message: "success",
-      currentUser:{
-        currentObjectId : req.user._id,
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        email: req.user.email,
-        contact_number: req.user.contact_number,
-        userType: req.user.userType,
-        carType: req.user.carType,
-        driverPlateNumber: req.user.driverPlateNumber
-      }
-    }
+    // objProfile = {
+    //   message: "success",
+    //   currentUser:{
+    //     currentObjectId : req.user._id,
+    //     first_name: req.user.first_name,
+    //     last_name: req.user.last_name,
+    //     email: req.user.email,
+    //     contact_number: req.user.contact_number,
+    //     userType: req.user.userType,
+    //     carType: req.user.carType,
+    //     driverPlateNumber: req.user.driverPlateNumber
+    //   }
+    // }
+    console.log('here');
   }else{
     objProfile = {message: "failed",result: "Please Login First"}
   }
-  res.send(objProfile);
+  res.send('objProfile');
 });
 
 router.get('/get-profile', function(req, res){

@@ -59,7 +59,9 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', function(req, res, next) {
-  console.log("USER FIELD--> " + JSON.stringify(req.body))
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  // console.log("USER FIELD--> " + JSON.stringify(req.body))
   passport.authenticate('login', function(err, user, info) {
     if (err) {
       return next(err);
@@ -77,6 +79,7 @@ router.post('/login', function(req, res, next) {
       }
       // var token = tokenizer.sign(user);
       var token = jwt.sign(user, { expiresIn: '30s' });
+      req.header.authorization = token;
       var objLoginSuccess = {
         message : 'success',
         authorize : 'true',
@@ -109,23 +112,21 @@ if(!req.user){
 
 router.get('/profile', function(req, res){
   if(req.user){
-    objProfile = {
-      message: "success",
-      currentUser:{
-        currentObjectId : req.user._id,
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        email: req.user.email,
-        contact_number: req.user.contact_number,
-        userType: req.user.userType,
-        carType: req.user.carType,
-        driverPlateNumber: req.user.driverPlateNumber
-      }
-    }
+    // objProfile = {
+    //   message: "success",
+    //   currentUser:{
+    //     currentObjectId : req.user._id,
+    //     first_name: req.user.first_name,
+    //     last_name: req.user.last_name,
+    //     email: req.user.email,
+    //     contact_number: req.user.contact_number
+    //   }
+    // }
+    console.log(123, user);
   }else{
     objProfile = {message: "failed",result: "Please Login First"}
   }
-  res.send(objProfile);
+  res.send('hello');
 });
 
 router.get('/get-profile', function(req, res){
