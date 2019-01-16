@@ -80,8 +80,7 @@ router.post('/login', function(req, res, next) {
       var objLoginSuccess = {
         message : 'success',
         authorize : 'true',
-        token : token,
-        user
+        token : token
       }
       return res.send(objLoginSuccess);
     });
