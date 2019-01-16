@@ -1,7 +1,6 @@
 var LocalStrategy   = require('passport-local').Strategy;
 var User = require('../models/user');
 var bCrypt = require('bcrypt-nodejs');
-var tokenizer = require("../util/jwt-tokenizer");
 module.exports = function(passport){
 
 	passport.use('login', new LocalStrategy({

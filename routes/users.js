@@ -66,17 +66,23 @@ router.post('/login', function(req, res, next) {
       return next(err);
     }
     if (! user) {
-      var objLoginFailed = {
-        message : 'failed',
-        authorize : 'false'
-      }
-      return res.send(objLoginFailed);
+      return res.sendStatus(401);
     }
     req.login(user, loginErr => {
       if (loginErr) {
         return next(loginErr);
       }
+      var userjwt = {
+        user_type: user.userType,
+        username: user.username
+      }
       var token = jwt.sign({user}, 'mySecretKey' , { expiresIn: '1h' });
+      // var objLoginSuccess = {
+      //   message : 'success',
+      //   authorize : 'true',
+      //   token : token,
+      //   user
+      // }
       var objLoginSuccess = {
         message : 'success',
         authorize : 'true',
@@ -87,37 +93,37 @@ router.post('/login', function(req, res, next) {
   })(req, res, next);
 });
 
-router.get('/login-portal', function(req, res) {
-  res.render('auth/loginPortal');
-});
+// router.get('/login-portal', function(req, res) {
+//   res.render('auth/loginPortal');
+// });
 
-router.post('/login-portal', function(req, res, next) {
-  passport.authenticate('loginPortal', function(err, user, info) {
-    if (err) {
-      return next(err);
-    }
-    if (! user) {
-      var objLoginFailed = {
-        message : 'failed',
-        authorize : 'false'
-      }
-      return res.send(objLoginFailed);
-    }
-    req.login(user, loginErr => {
-      if (loginErr) {
-        return next(loginErr);
-      }
-      var token = tokenizer.sign(user);
-      var objLoginSuccess = {
-        message : 'success',
-        authorize : 'true',
-        token : token,
-        user
-      }
-      return res.send(objLoginSuccess);
-    });
-  })(req, res, next);
-});
+// router.post('/login-portal', function(req, res, next) {
+//   passport.authenticate('loginPortal', function(err, user, info) {
+//     if (err) {
+//       return next(err);
+//     }
+//     if (! user) {
+//       var objLoginFailed = {
+//         message : 'failed',
+//         authorize : 'false'
+//       }
+//       return res.send(objLoginFailed);
+//     }
+//     req.login(user, loginErr => {
+//       if (loginErr) {
+//         return next(loginErr);
+//       }
+//       var token = tokenizer.sign(user);
+//       var objLoginSuccess = {
+//         message : 'success',
+//         authorize : 'true',
+//         token : token,
+//         user
+//       }
+//       return res.send(objLoginSuccess);
+//     });
+//   })(req, res, next);
+// });
 
 //var tokenUser = tokenizer.verify;
 //var currentObjectId = "2rOrhGKkY3";
@@ -141,6 +147,7 @@ if(!req.user){
 
 router.get('/profile', function(req, res){
   if(req.user){
+   objProfile = req.user;
     // objProfile = {
     //   message: "success",
     //   currentUser:{
@@ -158,7 +165,7 @@ router.get('/profile', function(req, res){
   }else{
     objProfile = {message: "failed",result: "Please Login First"}
   }
-  res.send('objProfile');
+  res.send(objProfile);
 });
 
 router.get('/get-profile', function(req, res){

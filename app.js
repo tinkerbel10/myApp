@@ -1,4 +1,5 @@
 var createError = require('http-errors');
+const cors = require('cors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -9,18 +10,24 @@ mongoose.connect('mongodb://127.0.0.1/myappDB');
 
 var indexRouter = require('./routes/index');
 var userRequest = require('./routes/userRequest');
+var request = require('./routes/request');
+var role = require('./routes/role');
+var requestTransMethod = require('./routes/requestTransMethod');
+var userDetails = require('./routes/userDetails');
 
 var app = express();
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+app.use(cors({origin: [
+  "http://localhost:4200"
+], credentials: true}));
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -50,7 +57,12 @@ var auth = require('./routes/users')(passport);
 app.use('/', indexRouter);
 app.use('/users', auth);
 app.use('/auth', auth);
-app.use('/request', userRequest);
+app.use('/request', request);
+app.use('/role', role);
+app.use('/user-request', userRequest);
+app.use('/request-method', requestTransMethod);
+app.use('/user-details', userDetails);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
