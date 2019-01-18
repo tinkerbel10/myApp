@@ -3,13 +3,12 @@ var router = express.Router();
 var tokenizer = require("../util/jwt-tokenizer");
 const jwt = require('jsonwebtoken');
 var UserModel = require('../models/user');
+var UserController = require('../controllers/UserController');
+
+var AuthenticationController = require('../controllers/AuthenticationController');
+
 
 module.exports = function(passport){
-  router.get('/test', function(req, res){
-    // res.render('auth/signup');
-    res.send('test');
-  });
-var AuthenticationController = require('../controllers/AuthenticationController');
 
 
 router.post('/signup',function(req, res, next) {
@@ -28,7 +27,7 @@ router.post('/signup',function(req, res, next) {
       var objRegister = {
           message: "success",
           result: "success",
-          resultMessage: "Congratulations, You have successfully registered to Autozon",
+          resultMessage: "Congratulations, You have successfully registered",
           userId: signup._id,
           firstName: signup.first_name,
           lastName: signup.last_name
@@ -40,9 +39,6 @@ router.post('/signup',function(req, res, next) {
 
 
  router.get('/decode', tokenizer.verifyJwtToken, function(req, res, next) {
-  //  console.log('this is session', req,);
-  //  console.log('this is session',  res);
-  //  res.send(JSON.stringify(req.decoded));
   jwt.verify(req.token, 'mySecretKey', (err, authData) => {
     if(err) {
       res.sendStatus(403);
@@ -60,7 +56,6 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', function(req, res, next) {
-  // console.log("USER FIELD--> " + JSON.stringify(req.body))
   passport.authenticate('login', function(err, user, info) {
     if (err) {
       return next(err);
@@ -93,40 +88,6 @@ router.post('/login', function(req, res, next) {
   })(req, res, next);
 });
 
-// router.get('/login-portal', function(req, res) {
-//   res.render('auth/loginPortal');
-// });
-
-// router.post('/login-portal', function(req, res, next) {
-//   passport.authenticate('loginPortal', function(err, user, info) {
-//     if (err) {
-//       return next(err);
-//     }
-//     if (! user) {
-//       var objLoginFailed = {
-//         message : 'failed',
-//         authorize : 'false'
-//       }
-//       return res.send(objLoginFailed);
-//     }
-//     req.login(user, loginErr => {
-//       if (loginErr) {
-//         return next(loginErr);
-//       }
-//       var token = tokenizer.sign(user);
-//       var objLoginSuccess = {
-//         message : 'success',
-//         authorize : 'true',
-//         token : token,
-//         user
-//       }
-//       return res.send(objLoginSuccess);
-//     });
-//   })(req, res, next);
-// });
-
-//var tokenUser = tokenizer.verify;
-//var currentObjectId = "2rOrhGKkY3";
 router.get('/me', function(req, res){
 if(!req.user){
   var objMe = {message: "failed",result: "Please Login First"}
@@ -161,7 +122,7 @@ router.get('/profile', function(req, res){
     //     driverPlateNumber: req.user.driverPlateNumber
     //   }
     // }
-    console.log('here');
+    // console.log('here');
   }else{
     objProfile = {message: "failed",result: "Please Login First"}
   }
@@ -182,15 +143,7 @@ router.post('/update-profile', function(req, res){
   var setFieldsForUpdate = {
       'first_name' : req.body.first_name,
       'last_name' : req.body.last_name,
-      'contact_number' : req.body.contact_number,
-      'shipping_province_1' : req.body.shipping_province_1,
-      'shipping_municipality_1' : req.body.shipping_municipality_1,
-      'shipping_city_1' : req.body.shipping_city_1,
-      'shipping_other_notes_1' : req.body.shipping_other_notes_1,
-      'shipping_province_2' : req.body.shipping_province_2,
-      'shipping_municipality_2' : req.body.shipping_municipality_2,
-      'shipping_city_2' : req.body.shipping_city_2,
-      'shipping_other_notes_2' : req.body.shipping_other_notes_2
+      'contact_number' : req.body.contact_number
     }
 
   UserModel.update({'_id': currentObjectId},
@@ -248,6 +201,37 @@ router.get('/logout', function(req, res) {
   res.send(objLogout);
 });
 
+router.get('/all', function(req, res, next) {
+  UserController.search({}, function(error, results){
+    var response = {data: results};
+    res.send(response);
+  });
+});
+
+//get user by ID
+router.get('/:id', function(req, res, next) {
+  var id = req.params.id;
+  UserController.view(id, function(error, singleObject){
+    res.send(JSON.stringify(singleObject));
+  });
+});
+
+//FOR UPDATING
+router.post('/:id', function(req, res, next) {
+  var data = req.body;
+  var id = req.params.id;
+  UserController.update(id, data ,function(error, singleObject){
+    res.send(JSON.stringify(singleObject));
+  });
+});
+
+//FOR DELLETING
+router.delete('/:id', function(req, res, next) {
+  var id = req.params.id;
+  UserController.delete(id, function(error, singleObject){
+    res.send(JSON.stringify(singleObject));
+  });
+});
 //module.exports = router;
 	return router;
 }

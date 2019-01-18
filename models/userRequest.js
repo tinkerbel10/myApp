@@ -10,8 +10,9 @@ var userRequestSchema = new Schema({
   last_name: String,
   first_name: String,
   user_role: String,
-  createdAt : {type: Date, default: Date.now},
-  updatedAt : {type: Date, default: Date.now}
+  created_at: {type: Date, default: Date.now},
+  updated_at: {type: Date, default: Date.now},
+  is_deleted: {type:Boolean, default:false}
 });
 
 var UserRequest = mongoose.model('UserRequest', userRequestSchema);

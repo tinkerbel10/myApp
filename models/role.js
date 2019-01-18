@@ -6,8 +6,9 @@ var Schema = mongoose.Schema;
 var roleSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String},
-  createdAt : {type: Date, default: Date.now},
-  updatedAt : {type: Date, default: Date.now}
+  created_at: {type: Date, default: Date.now},
+  updated_at: {type: Date, default: Date.now},
+  is_deleted: {type:Boolean, default:false}
 });
 
 

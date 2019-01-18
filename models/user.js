@@ -12,11 +12,11 @@ var userSchema = new Schema({
   password: { type: String, required: true },
   first_name: String,
   last_name: String,
-  birthdate: String,
   contact_number: String,
   user_type: String,
-  createdAt : {type: Date, default: Date.now},
-  updatedAt : {type: Date, default: Date.now}
+  created_at: {type: Date, default: Date.now},
+  updated_at: {type: Date, default: Date.now},
+  is_deleted: {type:Boolean, default:false}
 });
 
 //hashing a password before saving it to the database

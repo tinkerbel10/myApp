@@ -1,22 +1,16 @@
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
 var tokenizer = require("../util/jwt-tokenizer");
-//--------------another way to encode user--------------------------
 const jwt = require('jsonwebtoken');
 var UserModel = require('../models/user');
-var isAuthenticated = function (req, res, next) {
-	if (req.isAuthenticated())
-		return next();
 
-	res.redirect('/ipostmo-auth/login');
-}
-var currentProfileGlobal = {}
 module.exports = function(passport){
+  router.get('/test', function(req, res){
+    // res.render('auth/signup');
+    res.send('test');
+  });
 var AuthenticationController = require('../controllers/AuthenticationController');
-router.get('/signup', function(req, res){
-		res.render('auth/signup');
-});
+
 
 router.post('/signup',function(req, res, next) {
   passport.authenticate('signup',{ session: true },function(err, signup, info) {
@@ -34,7 +28,7 @@ router.post('/signup',function(req, res, next) {
       var objRegister = {
           message: "success",
           result: "success",
-          resultMessage: "Congratulations, You have successfully registered to Autozon",
+          resultMessage: "Congratulations, You have successfully registered",
           userId: signup._id,
           firstName: signup.first_name,
           lastName: signup.last_name
@@ -44,14 +38,18 @@ router.post('/signup',function(req, res, next) {
   })(req, res, next);
  });
 
- router.get('/token', function(req, res) {
-   var user = {username: "akousername", fullname: "akofullname"};
-   var token = tokenizer.sign(user);
-   res.send(token);
- });
 
- router.get('/decode', tokenizer.verify, function(req, res, next) {
-   res.send(JSON.stringify(req.decoded));
+ router.get('/decode', tokenizer.verifyJwtToken, function(req, res, next) {
+  jwt.verify(req.token, 'mySecretKey', (err, authData) => {
+    if(err) {
+      res.sendStatus(403);
+    } else {
+      res.json({
+        message: 'Post created...',
+        authData
+      });
+    }
+  });
  });
 
 router.get('/login', function(req, res) {
@@ -59,39 +57,38 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  // console.log("USER FIELD--> " + JSON.stringify(req.body))
   passport.authenticate('login', function(err, user, info) {
     if (err) {
       return next(err);
     }
     if (! user) {
-      var objLoginFailed = {
-        message : 'failed',
-        authorize : 'false'
-      }
-      return res.send(objLoginFailed);
+      return res.sendStatus(401);
     }
     req.login(user, loginErr => {
       if (loginErr) {
         return next(loginErr);
       }
-      // var token = tokenizer.sign(user);
-      var token = jwt.sign(user, { expiresIn: '30s' });
-      req.header.authorization = token;
+      var userjwt = {
+        user_type: user.userType,
+        username: user.username
+      }
+      var token = jwt.sign({user}, 'mySecretKey' , { expiresIn: '1h' });
+      // var objLoginSuccess = {
+      //   message : 'success',
+      //   authorize : 'true',
+      //   token : token,
+      //   user
+      // }
       var objLoginSuccess = {
         message : 'success',
         authorize : 'true',
-        token : token,
-        user
+        token : token
       }
       return res.send(objLoginSuccess);
     });
   })(req, res, next);
 });
-//var tokenUser = tokenizer.verify;
-//var currentObjectId = "2rOrhGKkY3";
+
 router.get('/me', function(req, res){
 if(!req.user){
   var objMe = {message: "failed",result: "Please Login First"}
@@ -112,6 +109,7 @@ if(!req.user){
 
 router.get('/profile', function(req, res){
   if(req.user){
+   objProfile = req.user;
     // objProfile = {
     //   message: "success",
     //   currentUser:{
@@ -119,14 +117,17 @@ router.get('/profile', function(req, res){
     //     first_name: req.user.first_name,
     //     last_name: req.user.last_name,
     //     email: req.user.email,
-    //     contact_number: req.user.contact_number
+    //     contact_number: req.user.contact_number,
+    //     userType: req.user.userType,
+    //     carType: req.user.carType,
+    //     driverPlateNumber: req.user.driverPlateNumber
     //   }
     // }
-    console.log(123, user);
+    // console.log('here');
   }else{
     objProfile = {message: "failed",result: "Please Login First"}
   }
-  res.send('hello');
+  res.send(objProfile);
 });
 
 router.get('/get-profile', function(req, res){
@@ -143,15 +144,7 @@ router.post('/update-profile', function(req, res){
   var setFieldsForUpdate = {
       'first_name' : req.body.first_name,
       'last_name' : req.body.last_name,
-      'contact_number' : req.body.contact_number,
-      'shipping_province_1' : req.body.shipping_province_1,
-      'shipping_municipality_1' : req.body.shipping_municipality_1,
-      'shipping_city_1' : req.body.shipping_city_1,
-      'shipping_other_notes_1' : req.body.shipping_other_notes_1,
-      'shipping_province_2' : req.body.shipping_province_2,
-      'shipping_municipality_2' : req.body.shipping_municipality_2,
-      'shipping_city_2' : req.body.shipping_city_2,
-      'shipping_other_notes_2' : req.body.shipping_other_notes_2
+      'contact_number' : req.body.contact_number
     }
 
   UserModel.update({'_id': currentObjectId},

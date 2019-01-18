@@ -3,7 +3,7 @@ var router = express.Router();
 var requestTransMethodController = require('../controllers/requestTransMethodController');
 
 router.get('/', function(req, res, next){
-  requestTransMethodController.search({}, function(err, result){
+  requestTransMethodController.search({is_deleted: false}, function(err, result){
     var response = {data: result};
       res.send(response);
   });
@@ -22,7 +22,6 @@ router.post('/', function(req, res, next) {
 router.get('/:id', function(req, res, next){
   var id = req.params.id;
   requestTransMethodController.view(id, function(err, result){
-    // console.log("FORM DATAqqq---> " + JSON.stringify(result));
     res.send(JSON.stringify(result));
   });
 });
@@ -33,7 +32,6 @@ router.delete('/:id', function(req, res, next) {
   var id = req.params.id;
   var formData = {is_deleted: true};
   requestTransMethodController.delete(id, formData, function(err, result){
-    // console.log("formData--->" + JSON.stringify(result))
     res.send(result)
   });
 });
@@ -43,7 +41,6 @@ router.post('/:id', function(req, res, next){
   var id = req.params.id;
   var formData = req.body;
   requestTransMethodController.update(id, formData, function(err, result){
-    // console.log("formData--->" + JSON.stringify(result))
     res.send(result)
   });
 });

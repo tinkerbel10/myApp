@@ -21,10 +21,9 @@ module.exports = function(passport){
             newUser.first_name = req.body.first_name;
             newUser.last_name = req.body.last_name;
             newUser.contact_number = req.body.contact_number;
-            newUser.userType = req.body.userType;
-            newUser.birthdate = req.body.birthdate;
-            newUser.createdAt = new Date();
-            newUser.updatedAt = new Date();
+            newUser.user_type = req.body.user_type;
+            newUser.created_at = new Date();
+            newUser.updated_at = new Date();
             newUser.save(function(err) {
               if (err){
                 // console.log('Error in Saving user: '+ err);   

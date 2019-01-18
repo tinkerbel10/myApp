@@ -123,10 +123,10 @@ var moment = require('moment');
         console.log("new object ID-> " + objectId);
         // var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://localhost:2000/ipostmo-auth/mail-signup/'+ objectId +'">click to verify your account101</a></div>';
         var mailOptions = {
-          from: '"Mascore.com.ph" <mascore.com.ph@gmail.com>', // sender address
+          from: '"Donson Autoshop" <mascore.com.ph@gmail.com>', // sender address
           to: 'email,' + email, // list of receivers
-          subject: 'Welcome to Mascore.com.ph!', // Subject line
-          text: 'Mascore.com.ph Verification', // plaintext body
+          subject: 'Welcome !', // Subject line
+          text: 'Register Verification', // plaintext body
           html: '<html>'
           + '<head>'
               + '<title>Mascore Email Verification</title>'
@@ -160,14 +160,6 @@ var moment = require('moment');
                                                               +'</tr></table></td></tr></table></td></tr></table></td></tr></table></td></tr><tr>'
                   +'<td bgcolor="#ffffff" align="center" style="padding: 20px 0px;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">'
                       +'<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" style="max-width: 500px;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;border-collapse: collapse !important;">'
-                          +'<tr>'
-                              +'<td align="center" style="font-size: 12px; line-height: 18px; font-family: Helvetica, Arial, sans-serif; color:#666666;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">Unit 14 Ground Floor, East of Galeria Building, Topaz Rd, San Antonio, Pasig, Metro Manila'
-                                  +'<br>'
-                                  +'<a href="#" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; color: #666666; text-decoration: none;">autozone_ph@autozoneph.com</a>'
-                                  +'<span style="font-family: Arial, sans-serif; font-size: 12px; color: #444444;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>'
-                                  +'<a href="#" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; color: #666666; text-decoration: none;">View this email in your browser</a>'
-                              +'</td>'
-                          +'</tr>'
                     +  '</table></td></tr></table></body></html>' // html body
         };
         transporter.sendMail(mailOptions, function(error, info){
