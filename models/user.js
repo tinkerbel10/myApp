@@ -6,14 +6,13 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var userSchema = new Schema({
-  //username: { type: String, required: true, unique: true },
   username: { type: String, required: true, index: { unique: true } },
   email: { type: String, required: true},
-  password: { type: String, required: true },
-  first_name: String,
-  last_name: String,
-  contact_number: String,
-  user_type: String,
+  password: { type: String},
+  first_name:  { type: String},
+  last_name: { type: String},
+  contact_number: { type: String},
+  role_id: { type: String},
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now},
   is_deleted: {type:Boolean, default:false}

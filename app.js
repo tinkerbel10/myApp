@@ -9,10 +9,10 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1/myappDB');
 
 var indexRouter = require('./routes/index');
-var userRequest = require('./routes/userRequest');
-var request = require('./routes/request');
 var role = require('./routes/role');
-var requestTransMethod = require('./routes/requestTransMethod');
+var service = require('./routes/service');
+var transaction = require('./routes/transaction');
+var serviceTransaction = require('./routes/serviceTransaction');
 var userDetails = require('./routes/userDetails');
 
 var app = express();
@@ -41,7 +41,6 @@ var passport = require('passport');
 var expressSession = require('express-session');
 app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
-//app.use(passport.session());
 app.use(passport.session({
     secret: 'something',
     cookie: {
@@ -56,11 +55,11 @@ initPassport(passport);
 var auth = require('./routes/users')(passport);
 app.use('/', indexRouter);
 app.use('/users', auth);
-app.use('/auth', auth);
-app.use('/request', request);
+app.use('/service', service);
 app.use('/role', role);
-app.use('/user-request', userRequest);
-app.use('/request-method', requestTransMethod);
+app.use('/auth', auth);
+app.use('/transaction', transaction);
+app.use('/service-transaction', serviceTransaction);
 app.use('/user-details', userDetails);
 
 

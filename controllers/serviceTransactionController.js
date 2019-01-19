@@ -1,5 +1,5 @@
-var request = require('../models/request');
-var mod = request;
+var serviceTransaction = require('../models/serviceTransaction');
+var mod = serviceTransaction;
 
 var BaseCRUD = {
   save: function(obj, callback){
@@ -9,27 +9,27 @@ var BaseCRUD = {
     });
   },
   search: function(search, callback){
-    request.find(function(err, list){
+    serviceTransaction.find(function(err, list){
       callback(err, list);
     });
   },
   fetchAll: function(search, callback){
-    request.find({}, function(err, list){
+    serviceTransaction.find({}, function(err, list){
       callback(err, list);
     });
   },
   view: function(id, callback){
-    request.findById(id, function(err, result){
+    serviceTransaction.findById(id, function(err, result){
       callback(err, result);
     })
   },
   delete: function(id, formData, callback){
-    request.findByIdAndUpdate(id, {$set: formData}, function(err, result){
+    serviceTransaction.findByIdAndUpdate(id, {$set: formData}, function(err, result){
       callback(err, result);
     });
   },
   update: function(id, formData, callback){
-    request.findByIdAndUpdate(id, {$set: formData}, function(err, result){
+    serviceTransaction.findByIdAndUpdate(id, {$set: formData}, function(err, result){
       callback(err, result);
     });
   }

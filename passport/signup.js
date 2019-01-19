@@ -22,6 +22,7 @@ module.exports = function(passport){
             newUser.last_name = req.body.last_name;
             newUser.contact_number = req.body.contact_number;
             newUser.user_type = req.body.user_type;
+            newUser.role_id = req.body.role_id;
             newUser.created_at = new Date();
             newUser.updated_at = new Date();
             newUser.save(function(err) {

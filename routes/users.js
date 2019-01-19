@@ -67,10 +67,8 @@ router.post('/login', function(req, res, next) {
       if (loginErr) {
         return next(loginErr);
       }
-      var userjwt = {
-        user_type: user.userType,
-        username: user.username
-      }
+      //delete password
+      user.password = '';
       var token = jwt.sign({user}, 'mySecretKey' , { expiresIn: '1h' });
       // var objLoginSuccess = {
       //   message : 'success',
@@ -79,8 +77,6 @@ router.post('/login', function(req, res, next) {
       //   user
       // }
       var objLoginSuccess = {
-        message : 'success',
-        authorize : 'true',
         token : token
       }
       return res.send(objLoginSuccess);

@@ -1,17 +1,20 @@
 var express = require('express');
 var router = express.Router();
-var requestTransMethodController = require('../controllers/requestTransMethodController');
+var serviceTransactionController = require('../controllers/serviceTransactionController');
+var serviceTransaction = require('../models/serviceTransaction');
 
 router.get('/', function(req, res, next){
-  requestTransMethodController.search({is_deleted: false}, function(err, result){
+  serviceTransactionController.search({is_deleted: false}, function(err, result){
     var response = {data: result};
       res.send(response);
   });
 });
 
+
+//CREATE
 router.post('/', function(req, res, next) {
   var data = req.body;
-  requestTransMethodController.save(data, function(error, singleObject){
+  serviceTransactionController.save(data, function(error, singleObject){
     var response = {data: singleObject};
     res.send(JSON.stringify(response))
   });
@@ -21,17 +24,16 @@ router.post('/', function(req, res, next) {
 //RETRIEVE BY ID
 router.get('/:id', function(req, res, next){
   var id = req.params.id;
-  requestTransMethodController.view(id, function(err, result){
+  serviceTransactionController.view(id, function(err, result){
     res.send(JSON.stringify(result));
   });
 });
 
 //DELETE
-
 router.delete('/:id', function(req, res, next) {
   var id = req.params.id;
   var formData = {is_deleted: true};
-  requestTransMethodController.delete(id, formData, function(err, result){
+  serviceTransactionController.delete(id, formData, function(err, result){
     res.send(result)
   });
 });
@@ -40,12 +42,9 @@ router.delete('/:id', function(req, res, next) {
 router.post('/:id', function(req, res, next){
   var id = req.params.id;
   var formData = req.body;
-  requestTransMethodController.update(id, formData, function(err, result){
+  serviceTransactionController.update(id, formData, function(err, result){
     res.send(result)
   });
 });
-
-
-
 
 module.exports = router;

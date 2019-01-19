@@ -1,5 +1,5 @@
-var requestTransMethodTransMethod = require('../models/requestTransMethod');
-var mod = requestTransMethodTransMethod;
+var service = require('../models/service');
+var mod = service;
 
 var BaseCRUD = {
   save: function(obj, callback){
@@ -9,27 +9,27 @@ var BaseCRUD = {
     });
   },
   search: function(search, callback){
-    requestTransMethod.find(function(err, list){
+    service.find(function(err, list){
       callback(err, list);
     });
   },
   fetchAll: function(search, callback){
-    requestTransMethod.find({}, function(err, list){
+    service.find({}, function(err, list){
       callback(err, list);
     });
   },
   view: function(id, callback){
-    requestTransMethod.findById(id, function(err, result){
+    service.findById(id, function(err, result){
       callback(err, result);
     })
   },
   delete: function(id, formData, callback){
-    requestTransMethod.findByIdAndUpdate(id, {$set: formData}, function(err, result){
+    service.findByIdAndUpdate(id, {$set: formData}, function(err, result){
       callback(err, result);
     });
   },
   update: function(id, formData, callback){
-    requestTransMethod.findByIdAndUpdate(id, {$set: formData}, function(err, result){
+    service.findByIdAndUpdate(id, {$set: formData}, function(err, result){
       callback(err, result);
     });
   }
