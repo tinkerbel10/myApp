@@ -20,7 +20,7 @@ var BaseCRUD = {
   },
   view: function(id, callback){
     service.findById(id, function(err, result){
-      callback(err, result);
+    callback(err, result);
     })
   },
   delete: function(id, formData, callback){

@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var serviceTransactionSchema = new Schema({
   name: String,
   service_id: { type: String, required: true},
-  transaction_id: { type: String, required: true},
+  transaction_id: { type: String},
   customerName: { type: String, required: true},
   employeeName: { type: String, required: true},
   description: { type: String},

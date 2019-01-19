@@ -1,14 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var serviceController = require('../controllers/serviceController');
-var service = require('../models/service');
+var serviceTransactionController = require('../controllers/serviceTransactionController');
 
-router.get('/', function(req, res, next){
+router.get('/', function(req, res, next){WW
   serviceController.search({is_deleted: false}, function(err, result){
     var response = {data: result};
       res.send(response);
   });
 });
+
 
 //CREATE
 router.post('/', function(req, res, next) {
@@ -46,5 +47,7 @@ router.post('/:id', function(req, res, next){
     res.send(result)
   });
 });
+
+
 
 module.exports = router;

@@ -9,12 +9,13 @@ var BaseCRUD = {
     });
   },
   search: function(search, callback){
-    serviceTransaction.find(function(err, list){
+    serviceTransaction.find({is_deleted: false}, function(err, list){
       callback(err, list);
     });
   },
   fetchAll: function(search, callback){
     serviceTransaction.find({}, function(err, list){
+      console.log("asdasd"+JSON.stringify(list))
       callback(err, list);
     });
   },
