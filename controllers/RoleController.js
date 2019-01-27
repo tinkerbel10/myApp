@@ -9,7 +9,7 @@ var BaseCRUD = {
     });
   },
   search: function(search, callback){
-    role.find(function(err, list){
+    role.find({is_deleted: false}, function(err, list){
       callback(err, list);
     });
   },

@@ -33,7 +33,7 @@ router.post('/signup',function(req, res, next) {
           lastName: signup.last_name
       }
     }
-    return res.send(objRegister);
+    return res.json(objRegister);
   })(req, res, next);
  });
 
@@ -41,7 +41,8 @@ router.post('/signup',function(req, res, next) {
  router.get('/decode', tokenizer.verifyJwtToken, function(req, res, next) {
   jwt.verify(req.token, 'mySecretKey', (err, authData) => {
     if(err) {
-      res.sendStatus(403);
+      // res.jsonStatus(403);
+      res.status(401).send({ error: 'Please Login First!' });
     } else {
       res.json({
         message: 'Post created...',
@@ -60,12 +61,14 @@ router.post('/login', function(req, res, next) {
     if (err) {
       return next(err);
     }
-    if (! user) {
-      return res.sendStatus(401);
+    if (!user) {
+      // return res.jsonStatus(401);
+      res.status(401).send({ error: "Unauthorized!" });
     }
     req.login(user, loginErr => {
       if (loginErr) {
-        return next(loginErr);
+        // return next(loginErr);
+       return next(res.status(401).send({ error: "Unauthorized!" }));
       }
       //delete password
       user.password = '';
@@ -77,9 +80,10 @@ router.post('/login', function(req, res, next) {
       //   user
       // }
       var objLoginSuccess = {
-        token : token
+        token : token,
+        role : user.role_name
       }
-      return res.send(objLoginSuccess);
+      return res.json(objLoginSuccess);
     });
   })(req, res, next);
 });
@@ -99,7 +103,7 @@ if(!req.user){
     }
   }
 }
-  res.send(objMe);
+  res.json(objMe);
 });
 
 router.get('/profile', function(req, res){
@@ -122,20 +126,19 @@ router.get('/profile', function(req, res){
   }else{
     objProfile = {message: "failed",result: "Please Login First"}
   }
-  res.send(objProfile);
+  res.json(objProfile);
 });
 
 router.get('/get-profile', function(req, res){
   var userId = req.query.objectId;
   AuthenticationController.profile(userId, function(err, list){
     var user = list[0];
-    res.send(user);
+    res.json(user);
   });
 });
 
 router.post('/update-profile', function(req, res){
   var currentObjectId = req.body.currentObjectId;
-  console.log("object id for update ------------->" + currentObjectId);
   var setFieldsForUpdate = {
       'first_name' : req.body.first_name,
       'last_name' : req.body.last_name,
@@ -151,7 +154,7 @@ router.post('/update-profile', function(req, res){
       obj = {message: "success",resultMessage: "Congratulations, Your Profile is Updated!"}
     }
     console.log("this is obj" + JSON.stringify(obj));
-    res.send(obj)
+    res.json(obj)
   });
 });
 
@@ -171,7 +174,8 @@ router.post('/update-password/:currentObjectId', function(req, res){
         message: "failed",
         resultMessage: "Failed to update, Please try again",
       }
-      res.send("Failed to update your password. Please Try Again");
+      // res.json("Failed to update your password. Please Try Again");
+      res.status(500).send({ error: "Failed to update your password. Please Try Again" });
     }else{
       /*if(req.user){
         req.session.destroy();
@@ -181,7 +185,7 @@ router.post('/update-password/:currentObjectId', function(req, res){
         resultMessage: "Your password is successfully updated",
       }
       // res.render("auth/forgot-redirect");
-      res.send(objUpdatePassword);
+      res.json(objUpdatePassword);
     }
 
   });
@@ -194,13 +198,13 @@ router.get('/logout', function(req, res) {
   }else{
     objLogout = {message: "failed",resultMessage: "Failed to Logout! Make sure you're Logged in!"}
   }
-  res.send(objLogout);
+  res.json(objLogout);
 });
 
 router.get('/all', function(req, res, next) {
-  UserController.search({}, function(error, results){
+  UserController.search({is_deleted:false}, function(error, results){
     var response = {data: results};
-    res.send(response);
+    res.json(response);
   });
 });
 
@@ -208,7 +212,7 @@ router.get('/all', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
   var id = req.params.id;
   UserController.view(id, function(error, singleObject){
-    res.send(JSON.stringify(singleObject));
+    res.json(singleObject);
   });
 });
 
@@ -217,15 +221,23 @@ router.post('/:id', function(req, res, next) {
   var data = req.body;
   var id = req.params.id;
   UserController.update(id, data ,function(error, singleObject){
-    res.send(JSON.stringify(singleObject));
+    res.json(singleObject);
   });
 });
 
 //FOR DELLETING
 router.delete('/:id', function(req, res, next) {
   var id = req.params.id;
-  UserController.delete(id, function(error, singleObject){
-    res.send(JSON.stringify(singleObject));
+  UserController.delete(id, {is_deleted:true}, function(error, singleObject){
+    res.send(singleObject);
+  });
+});
+
+router.post('/veriy-email/:id', function(req, res, next) {
+  var id = req.params.id;
+  var data = req.body;
+  UserController.update(id, data ,function(error, singleObject){
+    res.json(singleObject);
   });
 });
 //module.exports = router;

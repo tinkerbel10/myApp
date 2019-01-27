@@ -3,7 +3,7 @@ var router = express.Router();
 var serviceController = require('../controllers/serviceController');
 var serviceTransactionController = require('../controllers/serviceTransactionController');
 
-router.get('/', function(req, res, next){WW
+router.get('/', function(req, res, next){
   serviceController.search({is_deleted: false}, function(err, result){
     var response = {data: result};
       res.send(response);

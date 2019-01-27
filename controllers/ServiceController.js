@@ -9,7 +9,7 @@ var BaseCRUD = {
     });
   },
   search: function(search, callback){
-    service.find(function(err, list){
+    service.find({is_deleted: false}, function(err, list){
       callback(err, list);
     });
   },

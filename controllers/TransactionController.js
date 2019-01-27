@@ -9,7 +9,7 @@ var BaseCRUD = {
     });
   },
   search: function(search, callback){
-    transaction.find(function(err, list){
+    transaction.find({is_deleted: false}, function(err, list){
       callback(err, list);
     });
   },

@@ -6,7 +6,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1/myappDB');
+mongoose.set('useCreateIndex', true);
+mongoose.connect('mongodb://127.0.0.1/myappDB', { useNewUrlParser: true });
 
 var indexRouter = require('./routes/index');
 var role = require('./routes/role');
@@ -39,13 +40,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var passport = require('passport');
 var expressSession = require('express-session');
-app.use(expressSession({secret: 'mySecretKey'}));
+
+app.use(expressSession({secret: 'mySecretKey' ,
+saveUninitialized: true,
+resave: true} ));
 app.use(passport.initialize());
-app.use(passport.session({
-    secret: 'something',
-    cookie: {
-        secure: true
-}}));
+app.use(passport.session());
+
+var flash = require('connect-flash');
+app.use(flash());
 
 // Initialize Passport
 var initPassport = require('./passport/init');

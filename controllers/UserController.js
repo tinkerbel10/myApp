@@ -9,7 +9,7 @@ var BaseCRUD = {
     });
   },
   search: function(search, callback){
-    user.find(function(err, list){
+    user.find(search, function(err, list){
       callback(err, list);
     });
   },
@@ -24,7 +24,7 @@ var BaseCRUD = {
     })
   },
   delete: function(id, formData, callback){
-    user.findByIdAndUpdate(id, {$set: formData}, function(err, result){
+    user.findByIdAndUpdate(id, {$set: {is_deleted: true}}, function(err, result){
       callback(err, result);
     });
   },

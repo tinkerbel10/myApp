@@ -13,9 +13,11 @@ var userSchema = new Schema({
   last_name: { type: String},
   contact_number: { type: String},
   role_id: { type: String},
+  role_name: { type: String},
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now},
-  is_deleted: {type:Boolean, default:false}
+  is_deleted: {type:Boolean, default:false},
+  is_verified:{type: Boolean, default: false}
 });
 
 //hashing a password before saving it to the database

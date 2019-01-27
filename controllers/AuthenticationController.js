@@ -112,7 +112,7 @@ var moment = require('moment');
         return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
       },
 
-      sendMailVerify : function(email, objectId){
+      sendMailVerify : function(form, objectId){
         var transporter = nodemailer.createTransport({
         		service: 'Gmail',
         		auth: {
@@ -120,12 +120,11 @@ var moment = require('moment');
               pass: 'mascor2017'
         		}
         });
-        console.log("new object ID-> " + objectId);
         // var emailTemplate = '<div style="text-decoration: underline;"><a href = "http://localhost:2000/ipostmo-auth/mail-signup/'+ objectId +'">click to verify your account101</a></div>';
         var mailOptions = {
           from: '"Donson Autoshop" <mascore.com.ph@gmail.com>', // sender address
-          to: 'email,' + email, // list of receivers
-          subject: 'Welcome !', // Subject line
+          to: 'email,' + form.email, // list of receivers
+          subject: 'Welcome ' + form.first_name + '!', // Subject line
           text: 'Register Verification', // plaintext body
           html: '<html>'
           + '<head>'
@@ -151,12 +150,12 @@ var moment = require('moment');
                           +'<tr><td style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">'
                                   +'<table width="100%" border="0" cellspacing="0" cellpadding="0" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;border-collapse: collapse !important;">'
                               +'<tr><td align="center" style="font-size: 32px; font-family: Helvetica, Arial, sans-serif; color: #333333; padding-top: 30px;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">Email Confirmation</td>'
-                            +'</tr><tr><td align="left" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">Hi there '+ email +'. This is to verify that you have created an account in Autozon.com. However, to fully activate and use our website you need to verify your account by clicking the buttonbelow.</td>'
+                            +'</tr><tr><td align="left" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">Hi there '+ form.username +'. This is to verify that you have created an account in Autozon.com. However, to fully activate and use our website you need to verify your account by clicking the buttonbelow.</td>'
                                       +'</tr><tr><td align="center" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">'
                                               +'<table width="100%" border="0" cellspacing="0" cellpadding="0" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;border-collapse: collapse !important;">'
                                                   +'<tr><td align="center" style="padding-top: 25px;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">'
                                                           +'<table border="0" cellspacing="0" cellpadding="0" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;border-collapse: collapse !important;">'
-+'<tr><td align="center" style="border-radius: 3px;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;mso-table-lspace:0pt;mso-table-rspace:0pt;"bgcolor="#f17510"><a href="http://autozon.com.ph/" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration:none; color: #ffffff; text-decoration: none; border-radius: 3px; padding: 15px 25px; border: 1px solid #f17510;' +'display: inline-block;">verify here</a></td>'
++'<tr><td align="center" style="border-radius: 3px;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;mso-table-lspace:0pt;mso-table-rspace:0pt;"bgcolor="#f17510"><a href="http://localhost:4200/#/login?is_verified=true&id='+ objectId + '"  style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration:none; color: #ffffff; text-decoration: none; border-radius: 3px; padding: 15px 25px; border: 1px solid #f17510;' +'display: inline-block;">verify here</a></td>'
                                                               +'</tr></table></td></tr></table></td></tr></table></td></tr></table></td></tr><tr>'
                   +'<td bgcolor="#ffffff" align="center" style="padding: 20px 0px;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">'
                       +'<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" style="max-width: 500px;-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;border-collapse: collapse !important;">'
@@ -178,7 +177,7 @@ var moment = require('moment');
           var expireDate = new Date()
                     expireDate.setDate(expireDate.getDate() + 1);;
           var momentExpireDate = moment(expireDate).format("MMM Do YY")
-          if(list == ""){
+          if(list === ""){
             console.log("email not existing");
           }else{
             console.log("TO OBJECT ID -> " + list.objectId);
