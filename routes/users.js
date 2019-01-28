@@ -218,9 +218,22 @@ router.get('/:id', function(req, res, next) {
 
 //FOR UPDATING
 router.post('/:id', function(req, res, next) {
-  var data = req.body;
   var id = req.params.id;
-  UserController.update(id, data ,function(error, singleObject){
+  let formData = {
+    username: req.body.username,
+    email: req.body.email,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    role_id: req.body.role_id,
+    role_name: req.body.role_name,
+  }
+if(req.body.password !== 'password') {
+  formData.password =AuthenticationController.makeHashPassword(req.body.password);
+} 
+  UserController.update(id, formData ,function(error, singleObject){
+    if(error) {
+      res.send(error);
+    }
     res.json(singleObject);
   });
 });
