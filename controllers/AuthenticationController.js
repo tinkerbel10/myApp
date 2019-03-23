@@ -1,7 +1,7 @@
 //Sample Implementation
 var User = require('../models/user');
 var tokenizer = require("../util/jwt-tokenizer");
-var bCrypt = require('bcrypt-nodejs');
+var bCrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
 var moment = require('moment');
 
@@ -169,18 +169,12 @@ var moment = require('moment');
         });
       },
 
-      sendResetPassword : function(email, req, res, callback){
-        var searchCriteria = {"email" : email};
-        this.search(searchCriteria, function(err, list){
-          var user = list[0];
-          var objectId = user.objectId;
-          var expireDate = new Date()
-                    expireDate.setDate(expireDate.getDate() + 1);;
-          var momentExpireDate = moment(expireDate).format("MMM Do YY")
-          if(list === ""){
-            console.log("email not existing");
+      sendResetPassword : function(email, callback){
+        this.search({"email" : email}, function(err, list){
+          if(!list || !list.length){
+            callback('Email not found!');
           }else{
-            console.log("TO OBJECT ID -> " + list.objectId);
+          var objectId = list[0]._id;
             var transporter = nodemailer.createTransport({
                 service: 'Gmail',
                 auth: {
@@ -188,9 +182,6 @@ var moment = require('moment');
                   pass: 'mascor2017'
             		}
             });
-            //var emailTemplate = '<div align="center"><img src="logo.png"/><h3 style="color: #315C7E;">Click Reset button to reset your password</h3><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'" style="width: 130px; height: 50px; background-color:#315C7E; color: white; border-radius: 10px; font-size: 20px;"> Reset </a></div>'
-            // var emailTemplate = '<div align="center"><img src = "/images/logo.png"/><h3 style="color: #315C7E;">Click Reset button to reset your password</h3><a href = "https://ipostmo-v3-auth.crosr.com/ipostmo-auth/update-password/'+ objectId +'" style = "text-decoration:none; margin: 0; background: #315C7E; color: #fff; padding: 9px; font-size: 18px; line-height: 18px; border: 0;"> Reset</a></div>';
-            //<div style="text-decoration: underline;"><a href = "http://54.169.83.117:2000/ipostmo-auth/update-password/'+ objectId +'">click to reset your password 1</a></div>';
             var emailTemplate = '<html><head>'
                 +'<title>Mascore Change Password</title>'
                 +'<meta charset="utf-8">'
@@ -233,7 +224,7 @@ var moment = require('moment');
                                                             +'<table border="0" cellspacing="0" cellpadding="0" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;mso-table-lspace: 0pt; mso-table-rspace: 0pt;border-collapse: collapse !important;">'
                                                                 +'<tr>'
 +'<td align="center" style="border-radius:3px;-webkit-text-size-adjust:100%; -ms-text-size-adjust: 100%;mso-table-lspace: 0pt; mso-table-rspace: 0pt;" bgcolor="#f17510">'
-+'<a href="http://localhost:8000/autozon/change-password?userId='+ objectId +'&expireToken='+ momentExpireDate +'" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration:none; color: #ffffff; text-decoration: none; border-radius: 3px; padding: 15px 25px;border: 1px solid #f17510; display: inline-block;">set new password</a></td>'
++'<a href="http://localhost:4200/#/update-password?userId='+ objectId + '" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration:none; color: #ffffff; text-decoration: none; border-radius: 3px; padding: 15px 25px;border: 1px solid #f17510; display: inline-block;">set new password</a></td>'
                                                                 +'</tr>'
                                                             +'</table>'
                                                         +'</td>'
@@ -275,8 +266,8 @@ var moment = require('moment');
             transporter.sendMail(mailOptions, function(error, info){
               console.log('Message sent for forgot password: ' + info.response);
             });
+            callback(err, list);
           }
-          callback(err, list)
         });
       }
   };

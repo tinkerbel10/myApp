@@ -7,7 +7,14 @@ var logger = require('morgan');
 
 var mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
-mongoose.connect('mongodb://127.0.0.1/myappDB', { useNewUrlParser: true });
+mongoose.connect('mongodb://bel_bonrostro:bonrostro123@crmmongocluster-shard-00-00-ofnjl.azure.mongodb.net:27017,crmmongocluster-shard-00-01-ofnjl.azure.mongodb.net:27017,crmmongocluster-shard-00-02-ofnjl.azure.mongodb.net:27017/mongodb-crm-001?ssl=true&replicaSet=crmMongoCluster-shard-0&authSource=admin&retryWrites=true', { useNewUrlParser: true })
+  .then(() => {
+    console.log('Server Running!');
+  })
+  .catch(err => { // mongoose connection error will be handled here
+    console.error('App starting error:', err.stack);
+    process.exit(1);
+  });
 
 var indexRouter = require('./routes/index');
 var role = require('./routes/role');

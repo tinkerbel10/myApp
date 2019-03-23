@@ -14,6 +14,7 @@ var userSchema = new Schema({
   contact_number: { type: String},
   role_id: { type: String},
   role_name: { type: String},
+  isActivated: {type: Boolean, default: false},
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now},
   is_deleted: {type:Boolean, default:false},

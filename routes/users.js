@@ -13,27 +13,14 @@ module.exports = function(passport){
 
 router.post('/signup',function(req, res, next) {
   passport.authenticate('signup',{ session: true },function(err, signup, info) {
-    console.log("info--> " + JSON.stringify(signup));
     if (err) {
       return next(err);
     }
-    if (! signup) {
-      var objRegister = {
-        message: "failed",
-        result: "failed",
-        resultMessage: "Username or Email is already Exists"
-        }
+    if (!signup) {
+      return res.status(403).send({message: 'Email or Username already used!'});
     }else{
-      var objRegister = {
-          message: "success",
-          result: "success",
-          resultMessage: "Congratulations, You have successfully registered",
-          userId: signup._id,
-          firstName: signup.first_name,
-          lastName: signup.last_name
-      }
+      return res.status(200).send(info);
     }
-    return res.json(objRegister);
   })(req, res, next);
  });
 
@@ -62,23 +49,15 @@ router.post('/login', function(req, res, next) {
       return next(err);
     }
     if (!user) {
-      // return res.jsonStatus(401);
       res.status(401).send({ error: "Unauthorized!" });
     }
     req.login(user, loginErr => {
       if (loginErr) {
-        // return next(loginErr);
-       return next(res.status(401).send({ error: "Unauthorized!" }));
+       return next(res.status(401).send({ error: "Email not verified"}));
       }
       //delete password
       user.password = '';
       var token = jwt.sign({user}, 'mySecretKey' , { expiresIn: '1h' });
-      // var objLoginSuccess = {
-      //   message : 'success',
-      //   authorize : 'true',
-      //   token : token,
-      //   user
-      // }
       var objLoginSuccess = {
         token : token,
         role : user.role_name
@@ -109,20 +88,6 @@ if(!req.user){
 router.get('/profile', function(req, res){
   if(req.user){
    objProfile = req.user;
-    // objProfile = {
-    //   message: "success",
-    //   currentUser:{
-    //     currentObjectId : req.user._id,
-    //     first_name: req.user.first_name,
-    //     last_name: req.user.last_name,
-    //     email: req.user.email,
-    //     contact_number: req.user.contact_number,
-    //     userType: req.user.userType,
-    //     carType: req.user.carType,
-    //     driverPlateNumber: req.user.driverPlateNumber
-    //   }
-    // }
-    // console.log('here');
   }else{
     objProfile = {message: "failed",result: "Please Login First"}
   }
@@ -158,36 +123,29 @@ router.post('/update-profile', function(req, res){
   });
 });
 
-
+router.post('/forgot-password', function(req, res){
+  var email = req.body.email;
+  AuthenticationController.sendResetPassword(email, function(err, list){
+    if (err) {
+      res.status(404).send({message: err});
+    }else {   
+      res.status(200).send({message: 'Please check your email to change your password'});
+    }
+  });
+});
 
 router.post('/update-password/:currentObjectId', function(req, res){
-  var currentObjectId = req.params.currentObjectId;
-  var newPassword = req.body.password
-  var hashPassword = AuthenticationController.makeHashPassword(newPassword);
-  UserModel.update({'_id': currentObjectId},
+  var hashPassword = AuthenticationController.makeHashPassword(req.body.password);
+  UserModel.update({'_id': req.params.currentObjectId},
   {$set: {
       password : hashPassword
     }
   },function(err, result){
     if(err){
-      var objUpdatePassword = {
-        message: "failed",
-        resultMessage: "Failed to update, Please try again",
-      }
-      // res.json("Failed to update your password. Please Try Again");
       res.status(500).send({ error: "Failed to update your password. Please Try Again" });
     }else{
-      /*if(req.user){
-        req.session.destroy();
-      }*/
-      var objUpdatePassword = {
-        message: "success",
-        resultMessage: "Your password is successfully updated",
-      }
-      // res.render("auth/forgot-redirect");
-      res.json(objUpdatePassword);
+      res.status(200).send({ message: "Your password is successfully updated" });
     }
-
   });
 });
 
@@ -219,11 +177,12 @@ router.get('/:id', function(req, res, next) {
 //FOR UPDATING
 router.post('/:id', function(req, res, next) {
   var id = req.params.id;
+  var id = req.params.id;
   let newPassword;
-if(req.body.password !== 'password') {
-  newPassword = AuthenticationController.makeHashPassword(req.body.password);
-  req.body.password = newPassword;
-} 
+  if(req.body.password !== 'password') {
+    newPassword = AuthenticationController.makeHashPassword(req.body.password);
+    req.body.password = newPassword;
+  }
   UserController.update(id, req.body ,function(error, singleObject){
     if(error) {
       res.send(error);

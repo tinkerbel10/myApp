@@ -30,15 +30,10 @@ module.exports = function(passport){
             newUser.updated_at = new Date();
             newUser.save(function(err) {
               if (err){
-                // console.log('Error in Saving user: '+ err);   
                 return done(null, err);                                                    
               }
-              var email = req.body.email;
-              var newObjectId = newUser.id;
-
-                AuthenticationController.sendMailVerify(req.body, newObjectId)
-                //sendMail(email, newObjectId);
-              return done(null, newUser);
+                AuthenticationController.sendMailVerify(req.body, newUser.id);
+              return done(null, true, newUser);
             });
           }
         });
